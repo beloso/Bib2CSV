@@ -1,21 +1,25 @@
 #!/usr/bin/perl -s
-
+use strict;
+use warnings;
 use Text::BibTeX;
 
-our ($o);
+our ($o,$y);
 
 # Prepare output file
-my $csvfile;
+my $csvfile="output.csv";
+my $year=0;
+if($y){
+	$year=1;
+}
 if($o){
 	$csvfile= shift or die("Missing output file.\n");
-}else{
-	$csvfile = "output.csv";	
 }
+
 # Read input BibTeX file
-my $bibfile = shift or die("Missing input file.\n");
+my $file = shift or die("Missing input file.\n");
 
 # Load file into Text::BibTeX structure
-my $bibfile = new Text::BibTeX::File "$bibfile";
+my $bibfile = new Text::BibTeX::File "$file";
 
 # Keyword array
 my @keywords;
@@ -24,17 +28,24 @@ my @keywords;
 my %map;
 
 # Read all entries from file
-while ($entry = new Text::BibTeX::Entry $bibfile)
+while (my $entry = new Text::BibTeX::Entry $bibfile)
 {
 	# Safe guarding
   warn "Syntax error in input file." unless $entry->parse_ok;
 
 	# Read the citation key
-	$key = $entry->key;
+	my $key = $entry->key;
 	
 	# Read the file keywords and store them in an array
-	$wordsWithRep = $entry->get('keywords');
-	@words = split /\s*,\s*/, $wordsWithRep;
+	
+	my $wordsWithRep = $entry->get('keywords');
+	my @words;
+	@words = split /\s*,\s*/, $wordsWithRep if defined ($wordsWithRep);
+	
+	if($year){
+		my $yearEntry = $entry->get('year');
+		push @words,$yearEntry;
+	}
 	
 	# Store keywords information in HashMap
 	$map{$key} = [@words];
@@ -45,6 +56,7 @@ while ($entry = new Text::BibTeX::Entry $bibfile)
 
 # Create a new keywords with no repeated keywords
 my @keywordsNoRep = keys %{{map {$_=>0} @keywords}};
+@keywordsNoRep = sort @keywordsNoRep;
 
 # Write the header line
 my $out = ",\"";
@@ -61,13 +73,13 @@ foreach my $key ( keys %map) {
 	$line.="\"$key\",";
 	
 	# For each global keyword
-	foreach $global_keyword (@keywordsNoRep) {
+	foreach my $global_keyword (@keywordsNoRep) {
 		
 		# Start with no connection
 		my $hasConnection = 0;
 		
 		# For each entry keyword
-		foreach $entry_keyword ( @{$map{$key}} ){
+		foreach my $entry_keyword ( @{$map{$key}} ){
 			
 			# Assert connection and change connection status
 			if ( $entry_keyword eq $global_keyword ){
@@ -92,22 +104,23 @@ __END__
 
 =head1 NAME
 
-Bib2CSV - 
+Bib2CSV - create CSV file for concept analysys from BibTeX keyword and year attributes.
 
 =head1 SYNOPSIS
 
- Bib2CSV bibfile.bib  -
- Bib2CSV -o  name.csv bibfile.bib      -
-
+ Bib2CSV [-y] [-o FILEOUT] bibfile.bib
 
 =head1 DESCRIPTION
 
 =head2 OPTIONS
+	
+	-o FILE	outputs to the specified file
+	
+	-y 	also uses year information for the attributes
 
 =head1 AUTHOR
 
-
-=head1 SEE ALSO
+	Marcio Coelho and Tiago Veloso.
 
 perl(1).
 
