@@ -23,8 +23,8 @@ public abstract class Bib2CSV {
 	private static BibtexFile bibfile;
 	private static final BibtexParser parser = new BibtexParser(true);
 	private static List<BibtexEntry> entries;
-	private static Set<String> keywords;
-	private static Set<String> fields;
+	private static Set<String> keywords = new TreeSet<String>();
+	private static Set<String> fields = new TreeSet<String>();
 
 	public static void parseFile(Reader inputFile) throws ParseException,
 			IOException {
