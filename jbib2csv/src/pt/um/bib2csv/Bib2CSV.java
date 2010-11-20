@@ -37,7 +37,7 @@ public abstract class Bib2CSV {
 		List<String> result = new ArrayList<String>();
 
 		for (BibtexEntry entry : entries) {
-			result.add(entry.get);
+			result.add(entry.getEntryKey());
 		}
 
 		return result;
