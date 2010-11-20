@@ -1,9 +1,13 @@
 package pt.um.bib2csv;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,8 +26,10 @@ public abstract class Bib2CSV {
 
 	public static void parseFile(Reader inputFile) throws ParseException,
 			IOException {
+		bibfile= new BibtexFile();
 		parser.parse(bibfile, inputFile);
 	}
+
 
 	public static List<String> getKeys() {
 		entries = bibfile.getEntries();
@@ -32,22 +38,44 @@ public abstract class Bib2CSV {
 		for (BibtexEntry entry : entries) {
 			result.add(entry.getEntryKey());
 		}
-
+		System.out.println(entries.size());
 		return result;
 	}
 
-	public static Set<String> getFieldValues(String field) {
+	public static Set<String> getFieldValues(String field,String sep) {
 		Set<String> result = new TreeSet<String>();
 
 		for (BibtexEntry entry : entries) {
 			List<BibtexAbstractValue> values = entry.getFieldValuesAsList(field);
-
 			for (BibtexAbstractValue value : values) {
-				result.add(value.toString());
+				String fieldValue = value.toString();
+				fieldValue = fieldValue.substring(1,fieldValue.length()-1);
+				if (fieldValue.indexOf(sep)>=0) {
+					String[] fieldValues = fieldValue.split("\\s*"+sep+"\\s*");
+					for(String singleField : fieldValues){
+						result.add(singleField);
+					}
+				}else{
+					result.add(fieldValue);
+				}
 			}
 		}
 
-		keywords.addAll(result);
 		return result;
 	}
+	
+	public static Set<String> getAttributes	(){
+		Set<String> gbobalAttributes = new TreeSet<String>();
+		entries = bibfile.getEntries();
+		for (BibtexEntry entry : entries) {
+			Map entryFields = entry.getFields();
+			Iterator entryField = entryFields.entrySet().iterator();
+			while(entryField.hasNext()){
+				Map.Entry field = (Map.Entry)entryField.next();
+				gbobalAttributes.add(field.getKey().toString());			
+			}
+		}
+		return gbobalAttributes;
+	}
+	
 }
