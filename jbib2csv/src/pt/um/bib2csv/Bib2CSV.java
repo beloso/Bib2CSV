@@ -35,24 +35,18 @@ public abstract class Bib2CSV {
 
 		return result;
 	}
-	
-	public static Set<String> getAuthors() {
-		Set<String> result = 
-	}
 
-	public static Set<String> getKeywords() {
+	public static Set<String> getFieldValues(String field) {
 		Set<String> result = new TreeSet<String>();
-		
+
 		for (BibtexEntry entry : entries) {
-			BibtexAbstractValue value = entry.getFieldValue("keyword");
-			
-			String[] keywordsArray = value.toString().split(",");
-			
-			for (String keyword : keywordsArray) {
-				result.add(keyword);
+			List<BibtexAbstractValue> values = entry.getFieldValuesAsList(field);
+
+			for (BibtexAbstractValue value : values) {
+				result.add(value.toString());
 			}
 		}
-		
+
 		keywords.addAll(result);
 		return result;
 	}
