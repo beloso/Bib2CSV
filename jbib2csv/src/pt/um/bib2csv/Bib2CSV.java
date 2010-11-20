@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import bibtex.dom.BibtexAbstractEntry;
 import bibtex.dom.BibtexAbstractValue;
 import bibtex.dom.BibtexEntry;
 import bibtex.dom.BibtexFile;
@@ -23,59 +24,74 @@ public abstract class Bib2CSV {
 	private static final BibtexParser parser = new BibtexParser(true);
 	private static List<BibtexEntry> entries;
 	private static Set<String> keywords;
+	private static Set<String> fields;
 
 	public static void parseFile(Reader inputFile) throws ParseException,
 			IOException {
-		bibfile= new BibtexFile();
+		bibfile = new BibtexFile();
 		parser.parse(bibfile, inputFile);
 	}
-
 
 	public static List<String> getKeys() {
 		entries = bibfile.getEntries();
 		List<String> result = new ArrayList<String>();
 
 		for (BibtexEntry entry : entries) {
-			result.add(entry.getEntryKey());
+			result.add(entry.get);
 		}
-		System.out.println(entries.size());
+
 		return result;
 	}
 
-	public static Set<String> getFieldValues(String field,String sep) {
+	public static Set<String> getFieldValues(String field, String sep) {
 		Set<String> result = new TreeSet<String>();
 
 		for (BibtexEntry entry : entries) {
 			List<BibtexAbstractValue> values = entry.getFieldValuesAsList(field);
 			for (BibtexAbstractValue value : values) {
+
 				String fieldValue = value.toString();
-				fieldValue = fieldValue.substring(1,fieldValue.length()-1);
-				if (fieldValue.indexOf(sep)>=0) {
-					String[] fieldValues = fieldValue.split("\\s*"+sep+"\\s*");
-					for(String singleField : fieldValues){
-						result.add(singleField);
+				fieldValue = fieldValue.substring(1, fieldValue.length() - 1);
+
+				if (fieldValue.indexOf(sep) >= 0) {
+					String[] fieldValues = fieldValue.split(sep);
+					
+					for (String singleField : fieldValues) {
+						result.add(singleField.trim());
 					}
-				}else{
+				} else {
 					result.add(fieldValue);
 				}
 			}
 		}
 
+		keywords.addAll(result);
 		return result;
 	}
 	
-	public static Set<String> getAttributes	(){
+	public static Set<String> getFields(){
+		Set<String> result = new TreeSet<String>();
+		
+		for (BibtexEntry entry : entries) {
+			result.addAll(entry.getFields().keySet());
+		}
+		
+		fields.addAll(result);
+		return result;
+	}
+
+	public static Set<String> getAttributes() {
 		Set<String> gbobalAttributes = new TreeSet<String>();
 		entries = bibfile.getEntries();
 		for (BibtexEntry entry : entries) {
 			Map entryFields = entry.getFields();
 			Iterator entryField = entryFields.entrySet().iterator();
-			while(entryField.hasNext()){
-				Map.Entry field = (Map.Entry)entryField.next();
-				gbobalAttributes.add(field.getKey().toString());			
+			while (entryField.hasNext()) {
+				Map.Entry field = (Map.Entry) entryField.next();
+				gbobalAttributes.add(field.getKey().toString());
 			}
 		}
 		return gbobalAttributes;
 	}
-	
+
 }
