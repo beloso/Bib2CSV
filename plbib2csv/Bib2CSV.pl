@@ -3,14 +3,10 @@ use strict;
 use warnings;
 use Text::BibTeX;
 
-our ($o,$y);
+our ($o,$y,$a);
 
 # Prepare output file
 my $csvfile="output.csv";
-my $year=0;
-if($y){
-	$year=1;
-}
 if($o){
 	$csvfile= shift or die("Missing output file.\n");
 }
@@ -42,9 +38,13 @@ while (my $entry = new Text::BibTeX::Entry $bibfile)
 	my @words;
 	@words = split /\s*,\s*/, $wordsWithRep if defined ($wordsWithRep);
 	
-	if($year){
+	if($y){
 		my $yearEntry = $entry->get('year');
 		push @words,$yearEntry;
+	}
+	if($a){
+		my @authorEntry = $entry->split ('author');
+		push @words,@authorEntry;
 	}
 	
 	# Store keywords information in HashMap
