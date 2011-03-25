@@ -36,7 +36,7 @@ while (my $entry = new Text::BibTeX::Entry $bibfile)
 	my $wordsWithRep = $entry->get('keywords');
 	
 	# convert all elements to lowercase
-	my $wordsWithRepLc = lc($wordsWithRep);
+	my $wordsWithRepLc = lc($wordsWithRep) if defined ($wordsWithRep);
 	my @words;
 	@words = split /\s*,\s*/, $wordsWithRepLc if defined ($wordsWithRepLc);
 		
