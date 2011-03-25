@@ -33,6 +33,7 @@ while (my $entry = new Text::BibTeX::Entry $bibfile)
 	my $key = $entry->key;
 	
 	# Read the file keywords and store them in an array
+	my $wordsWithRep = $entry->get('keywords');
 	
 	# convert all elements to lowercase
 	my $wordsWithRepLc = lc($wordsWithRep);
