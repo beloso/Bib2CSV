@@ -106,24 +106,42 @@ __END__
 
 =head1 NAME
 
-Bib2CSV - create CSV file for concept analysys from BibTeX keyword and year attributes.
+bib2csv - create CSV file for concept analysys from BibTeX keyword and year attributes.
 
 =head1 SYNOPSIS
 
- Bib2CSV [-y] [-o FILEOUT] bibfile.bib
+bib2csv [B<-ya>] [-o F<filename>] F<bibfile.bib>
 
 =head1 DESCRIPTION
 
-=head2 OPTIONS
+This tool converts a LaTeX B<bibliography> file (B<BibTeX>) annotated with B<keywords> into a B<csv> file for use with the I<ConExp> tool available at I<http://conexp.sourceforge.net/>.
+
+=head1 OPTIONS
+
+=over 2
 	
-	-o FILE	outputs to the specified file
+=item B<-o> F<filename>
+
+outputs to the specified file.
 	
-	-y 	also uses year information for the attributes
+=item B<-y> 
 
-=head1 AUTHOR
+use information about the year of the bib entry for the attributes in addition to the keywords.
 
-	Marcio Coelho and Tiago Veloso.
+=item B<-a> 
 
-perl(1).
+use information about the author(s) of the entry for the attributes in addition to hte keywords.
+
+=back
+
+
+=head1 AUTHORS
+
+Marcio Coelho and Tiago Veloso.
+
+=head1 COPYRIGHT
+
+Permission is granted to copy, distribute and/or modify this 
+document under the terms of the GNU Public Licence.
 
 =cut
