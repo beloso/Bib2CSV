@@ -34,10 +34,11 @@ while (my $entry = new Text::BibTeX::Entry $bibfile)
 	
 	# Read the file keywords and store them in an array
 	
-	my $wordsWithRep = $entry->get('keywords');
+	# convert all elements to lowercase
+	my $wordsWithRepLc = lc($wordsWithRep);
 	my @words;
-	@words = split /\s*,\s*/, $wordsWithRep if defined ($wordsWithRep);
-	
+	@words = split /\s*,\s*/, $wordsWithRepLc if defined ($wordsWithRepLc);
+		
 	if($y){
 		my $yearEntry = $entry->get('year');
 		push @words,$yearEntry;
