@@ -1,15 +1,14 @@
-#!/usr/bin/perl -s
+#!/usr/bin/perl
+
 use strict;
 use warnings;
 use Text::BibTeX;
+use Getopt::Long;
 
-our ($o,$y,$a);
+my ($csvfile,$y,$a);
+GetOptions ('o=s' => \$csvfile, 'a' => \$a, 'y' => \$y);
 
 # Prepare output file
-my $csvfile="output.csv";
-if($o){
-	$csvfile= shift or die("Missing output file.\n");
-}
 
 # Read input BibTeX file
 my $file = shift or die("Missing input file.\n");
@@ -27,7 +26,7 @@ my %map;
 while (my $entry = new Text::BibTeX::Entry $bibfile)
 {
 	# Safe guarding
-  warn "Syntax error in input file." unless $entry->parse_ok;
+  	warn "Syntax error in input file." unless $entry->parse_ok;
 
 	# Read the citation key
 	my $key = $entry->key;
@@ -49,7 +48,7 @@ while (my $entry = new Text::BibTeX::Entry $bibfile)
 		push @words,@authorEntry;
 	}
 	
-	# Store keywords information in HashMap
+	# Store keywords information in a HashMap
 	$map{$key} = [@words];
 	
 	# Join entry keywords with global structure keywords
@@ -98,9 +97,13 @@ foreach my $key ( keys %map) {
 }
 
 # Write out the csv file
-open (FOUT,">$csvfile");
-print FOUT $out;
-close FOUT;
+if (defined $csvfile){
+	open (FOUT,">$csvfile");
+	print FOUT $out;
+	close FOUT;
+} else {
+	print $out;
+}
 
 __END__
 
