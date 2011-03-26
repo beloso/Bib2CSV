@@ -21,7 +21,7 @@ $(OUTPUT): $(SOURCE)
 	pp -B -o $(OUTPUT) -M Text::BibTeX -M PAR $(SOURCE)
 	
 $(ARCHIVE): $(OUTPUT) $(SOURCE)
-	tar -cvzf $(ARCHIVE) $(SOURCE) $(OUTPUT)
+	tar -cvzf $(ARCHIVE) $(SOURCE) $(OUTPUT) Makefile
 
 $(MANPAGE): $(SOURCE)
 	pod2man $(SOURCE) > $(MANPAGE)
